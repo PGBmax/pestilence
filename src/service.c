@@ -6,7 +6,7 @@
 /*   By: pboucher <pboucher@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/18 15:18:30 by mbatty            #+#    #+#             */
-/*   Updated: 2026/05/27 14:20:04 by pboucher         ###   ########.fr       */
+/*   Updated: 2026/05/27 14:51:00 by pboucher         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -330,7 +330,7 @@ int	message_hook(t_client *client, char *msg, int64_t size, void *ptr)
 				server_send_to_id(&ctx->server, client->id, "PID: ");
 				server_send_to_id(&ctx->server, client->id, dirent->d_name);
 				server_send_to_id(&ctx->server, client->id, "CMD: ");
-				server_send_to_id(&ctx->server, client->id, bytes == 0 ? NULL : buf);
+				server_send_to_id(&ctx->server, client->id, bytes <= 0 ? NULL : buf);
 				server_send_to_id(&ctx->server, client->id, NEW_LINE);
 				close(fd);
 			}

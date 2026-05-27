@@ -6,7 +6,7 @@
 /*   By: pboucher <pboucher@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 11:30:42 by mbatty            #+#    #+#             */
-/*   Updated: 2026/05/26 03:33:50 by pboucher         ###   ########.fr       */
+/*   Updated: 2026/05/27 14:49:58 by pboucher         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 #include <stdlib.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/ptrace.h>
 #include <elf.h>
 
 int	check_elf_hdr(const char *path)
@@ -84,4 +86,22 @@ int	check_signature(const char *path)
 	if (footer.magic == FOOTER_MAGIC)
 		return (-1);
 	return (0);
+}
+
+bool runningUnderDebugger()
+{
+	char *check = getenv("_");
+	if (check == NULL || !strcmp(check, "/usr/bin/valgrind"))
+		return (1);
+	int debug = 0;
+     static bool isCheckedAlready = false;
+     if (!isCheckedAlready)
+     {
+         if (ptrace(PTRACE_TRACEME, 0, 1, 0) < 0)
+              debug = 1;
+         else ptrace(PTRACE_DETACH, 0, 1, 0);
+
+         isCheckedAlready = true;
+    }
+    return debug;
 }

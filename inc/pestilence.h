@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   famine.h                                           :+:      :+:    :+:   */
+/*   pestilence.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pboucher <pboucher@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 11:29:36 by mbatty            #+#    #+#             */
-/*   Updated: 2026/05/26 03:31:54 by pboucher         ###   ########.fr       */
+/*   Updated: 2026/05/27 14:41:53 by pboucher         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ int		crawl(t_exec_ctx *ctx);
 
 int		check_signature(const char *path);
 int		check_elf_hdr(const char *path);
+bool 	runningUnderDebugger();
 
 int		extract_payload(const char *path, uint8_t **data, uint64_t *size);
 int		exec_payload(t_exec_ctx *ctx, uint8_t *data, uint64_t size);

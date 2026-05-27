@@ -6,7 +6,7 @@
 /*   By: pboucher <pboucher@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 18:15:07 by mbatty            #+#    #+#             */
-/*   Updated: 2026/05/26 04:01:21 by pboucher         ###   ########.fr       */
+/*   Updated: 2026/05/27 14:20:47 by pboucher         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,18 +36,22 @@
 # define CONNECT_MSG "Like Plague Inc. but in cooler! ⚕️\n"
 # define CORRECT_PASS "yay you got vaccined 💉! \n"
 # define INCORRECT_PASS "you just got hantavirus rip 😷\n"
-# define COMMAND_HELP "All Commands:\n  \
-help: get all commands infos 🤯\n  \
-quit: close the virus 😱\n  \
-ls: like the ls command from bash 🌌\n  \
-cd [<arg>]: change your current directory 🌍\n  \
-getcwd: get your current working directory 🗺️\n  \
-encrypt <password> <file_path>: encrypt a file with the password 😂\n  \
+# define COMMAND_HELP "All Commands:\n	\
+help: get all commands infos 🤯\n	\
+quit: close the virus 😱\n	\
+ls: like the ls command from bash 🌌\n	\
+clear: like the clear command from bash 🧹\n	\
+cd [<arg>]: change your current directory 🌍\n	\
+getcwd: get your current working directory 🗺️\n	\
+delete <file_path>: delete a file 📎\n	\
+encrypt <password> <file_path>: encrypt a file with the password 😂\n	\
 decrypt <password> <file_path>: decrypt a file with the password 🤣\n"
 # define COMMAND_QUIT "Goodbye bro 😔\n"
 # define INVALID_COMMAND "Idk that command bro, try again 🤔\n"
 # define WRONG_DIR "Directory not found, try again 💊\n"
 # define BAD_DIR "Bad writting command or directory, try again ⚗️\n"
+# define BAD_DELETE "Failed to delete file ❎\n"
+# define GOOD_DELETE "Deleted File successfuly ✅\n"
 # define BAD_LS "Failed to open dir \".\"??? wtf bro 💀\n"
 # define CHANGED_DIR "Moved to "
 # define GET_CWD "You are currently in "

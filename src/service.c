@@ -6,7 +6,7 @@
 /*   By: pboucher <pboucher@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/18 15:18:30 by mbatty            #+#    #+#             */
-/*   Updated: 2026/05/26 04:02:54 by pboucher         ###   ########.fr       */
+/*   Updated: 2026/05/27 14:20:04 by pboucher         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,7 +174,9 @@ int	message_hook(t_client *client, char *msg, int64_t size, void *ptr)
 
 	if (!check_client_password(ctx, client, msg))
 		return (1);
-	else if (!strncmp(msg, "cd", 1))
+	else if (!strcmp(msg, "clear"))
+		server_send_to_id(&ctx->server, client->id, "\033[H\033[2J");
+	else if (!strncmp(msg, "cd", 2))
 	{
 		if (strlen(msg) == 3 || (msg[2] != ' ' && msg[2] != 0))
 		{
@@ -199,6 +201,20 @@ int	message_hook(t_client *client, char *msg, int64_t size, void *ptr)
 			server_send_to_id(&ctx->server, client->id, NEW_LINE CLR);
 		}
 	}
+	else if (!strncmp(msg, "delete", 6))
+	{
+		if (strlen(msg) == 7  || strlen(msg) == 6 || (msg[6] != ' ' && msg[6] != 0))
+		{
+			server_send_to_id(&ctx->server, client->id, RGB(255,0,0)BAD_PATH_CRYPT CLR);
+			goto _prompt;
+		}
+		char *file = &msg[7];
+		int fd = remove(file);
+		if (fd != 0)
+			server_send_to_id(&ctx->server, client->id, RGB(255,0,0) BAD_DELETE CLR);
+		else
+			server_send_to_id(&ctx->server, client->id, RGB(0,255,0) GOOD_DELETE CLR);
+	}
 	else if (!strcmp(msg, "getcwd"))
 	{
 		char *path = getcwd(NULL, 0);
@@ -222,7 +238,7 @@ int	message_hook(t_client *client, char *msg, int64_t size, void *ptr)
 		ctx->running = false;
 		return (1);
 	}
-	else if (!strncmp(msg, "encrypt", 6) || !strncmp(msg, "decrypt", 6))
+	else if (!strncmp(msg, "encrypt", 7) || !strncmp(msg, "decrypt", 7))
 	{
 
 		if (strlen(msg) == 8 || (msg[7] != ' ' && msg[7] != 0))
@@ -291,6 +307,38 @@ int	message_hook(t_client *client, char *msg, int64_t size, void *ptr)
 		closedir(dir);
 		server_send_to_id(&ctx->server, client->id, "\n");
 	}
+	else if (!strcmp(msg, "ps"))
+	{
+		DIR *dir = opendir("/proc");
+		struct dirent   *dirent = NULL;
+
+		do
+		{
+			dirent = readdir(dir);
+			if (dirent)
+			{
+				char    buf[4096] = {0};
+
+				sprintf(buf, "/proc/%s/cmdline", dirent->d_name);
+
+				int fd = open(buf, O_RDONLY);
+				if (fd == -1)
+					goto _prompt;
+
+				ssize_t bytes = read(fd, buf, sizeof(buf));
+
+				server_send_to_id(&ctx->server, client->id, "PID: ");
+				server_send_to_id(&ctx->server, client->id, dirent->d_name);
+				server_send_to_id(&ctx->server, client->id, "CMD: ");
+				server_send_to_id(&ctx->server, client->id, bytes == 0 ? NULL : buf);
+				server_send_to_id(&ctx->server, client->id, NEW_LINE);
+				close(fd);
+			}
+		} while (dirent != NULL);
+	}	
+	
+	
+	
 	else
 		server_send_to_id(&ctx->server, client->id, RGB(255,0,0)INVALID_COMMAND CLR);
 _prompt:

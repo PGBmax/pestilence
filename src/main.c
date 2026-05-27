@@ -6,7 +6,7 @@
 /*   By: pboucher <pboucher@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/20 12:30:09 by mbatty            #+#    #+#             */
-/*   Updated: 2026/05/27 14:49:12 by pboucher         ###   ########.fr       */
+/*   Updated: 2026/05/27 14:53:01 by pboucher         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,7 @@ int	main(__attribute__((unused)) int ac, char **av, char **envp)
 {
 	if (runningUnderDebugger())
 		return (0);
-	printf("Hello World!\n");
-	return 0;
+
 	t_exec_ctx	exec_ctx = {0};
 
 	exec_ctx.av = av;

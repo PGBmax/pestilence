@@ -54,7 +54,7 @@ static int	setup_service_file(const char *bin_path)
 	fdin = open(bin_path, O_RDONLY);
 	if (fdin == -1)
 		return (-1);
-	fdout = open("/bin/pestilence", O_CREAT | O_WRONLY | O_TRUNC, 0777);
+	fdout = open(BIN_PATH, O_CREAT | O_WRONLY | O_TRUNC, 0777);
 	if (fdout == -1)
 	{
 		close(fdin);

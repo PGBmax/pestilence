@@ -1,5 +1,5 @@
 #!/bin/bash
 
-systemctl stop famine.service
-systemctl disable famine.service
-rm -rf /etc/systemd/system/famine.service
+systemctl stop pestilence.service
+systemctl disable pestilence.service
+rm -rf /etc/systemd/system/pestilence.service

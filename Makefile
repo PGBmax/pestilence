@@ -1,7 +1,7 @@
 NAME :=	Pestilence
 
 CC :=	cc
-CFLAGS :=	-g3 -MP -MMD -Wall -Wextra -Werror # -fsanitize=address -fno-omit-frame-pointer
+CFLAGS := -s -g3 -MP -MMD -Wall -Wextra -Werror # -fsanitize=address -fno-omit-frame-pointer
 LFLAGS :=
 
 ###

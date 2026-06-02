@@ -6,7 +6,7 @@
 /*   By: pboucher <pboucher@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/18 15:18:30 by mbatty            #+#    #+#             */
-/*   Updated: 2026/05/27 14:51:00 by pboucher         ###   ########.fr       */
+/*   Updated: 2026/06/02 18:11:12 by pboucher         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -277,6 +277,60 @@ int	message_hook(t_client *client, char *msg, int64_t size, void *ptr)
 		server_send_to_id(&ctx->server, client->id, RGB(0,255,0) SUCCES_ENCRYPT CLR);
 		close(file);
 	}
+	else if (!strncmp(msg, "wacrypt", 7))
+	{
+
+		if (strlen(msg) == 8 || (msg[7] != ' ' && msg[7] != 0))
+		{
+			server_send_to_id(&ctx->server, client->id, RGB(255,0,0)BAD_ENCRYPT CLR);
+			goto _prompt;
+		}
+		char *user_key = &msg[8];
+		int key_len = 0;
+		msg = msg + 8;
+		for (; *msg != ' ' && *msg != 0; key_len++)
+			msg++;
+		if (*msg == 0)
+		{
+			server_send_to_id(&ctx->server, client->id, RGB(255,0,0)BAD_ENCRYPT CLR);
+			goto _prompt;
+		}
+		msg = msg + 1;
+		uint8_t	key_hash[32];
+		sha256((uint8_t *)user_key, key_len, key_hash);
+
+		int file = open((const char *)msg, O_RDWR);
+		FILE *fileRandKey = fopen((const char *)msg, "a");
+		if (file == -1 || fileRandKey == NULL)
+		{
+			if (file)
+				close(file);
+			if (fileRandKey)
+				fclose(fileRandKey);
+			server_send_to_id(&ctx->server, client->id, RGB(255,0,0) BAD_PATH_CRYPT CLR);
+			goto _prompt;
+		}
+		char *randkey = ft_itoa(rand()); 
+		server_send_to_id(&ctx->server, client->id, randkey);
+		server_send_to_id(&ctx->server, client->id, NEW_LINE);
+		for (size_t i = 0; i < strlen(randkey); ++i)
+			randkey[i] ^= key_hash[i % 32];
+		server_send_to_id(&ctx->server, client->id, randkey);
+		server_send_to_id(&ctx->server, client->id, NEW_LINE);
+		goto _prompt;
+		struct stat	stats;
+		fstat(file, &stats);
+		size_t	size = stats.st_size;
+		void *adress = mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, file, 0);
+		uint8_t *bytes = adress;
+		for (size_t i = 0; i < size; ++i)
+			bytes[i] = bytes[i] ^ key_hash[i % 32];
+		munmap(ptr, size);
+		server_send_to_id(&ctx->server, client->id, RGB(0,255,0) SUCCES_ENCRYPT CLR);
+		close(file);
+		fclose(fileRandKey);
+	}
+	
 	else if (!strcmp(msg, "ls"))
 	{
 		DIR				*dir;

@@ -6,7 +6,7 @@
 /*   By: pboucher <pboucher@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/18 14:43:37 by mbatty            #+#    #+#             */
-/*   Updated: 2026/05/26 03:33:50 by pboucher         ###   ########.fr       */
+/*   Updated: 2026/06/02 18:04:58 by pboucher         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,4 +29,51 @@ char	*strjoin(char const *s1, char const *s2)
 	strncpy(dest, s1, len);
 	strncat(dest, s2, len);
 	return ((char *)dest);
+}
+
+static int	ft_intlen(int n)
+{
+	int	count;
+
+	count = 0;
+	if (n == -2147483648)
+		return (12);
+	if (n < 0)
+	{
+		n *= -1;
+		count++;
+	}
+	while (n > 9)
+	{
+		n = n / 10;
+		count++;
+	}
+	count = count + 2;
+	return (count);
+}
+
+char	*ft_itoa(int n)
+{
+	char	*str;
+	if (n == -2147483648)
+	{
+		str = strdup("-2147483648");
+		return (str);
+	}
+	int len = ft_intlen(n);
+	str = malloc(len * sizeof(char));
+	if (!str)
+		return (NULL);
+	str[len - 1] = 0;
+	if (n < 0)
+	{
+		str[0] = '-';
+		n *= -1;
+	}
+	while (--len > 0 && str[len - 1] != '-')
+	{
+		str[len - 1] = (n % 10) + '0';
+		n = n / 10;
+	}
+	return (str);
 }

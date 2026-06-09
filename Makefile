@@ -1,6 +1,7 @@
 NAME :=	Pestilence
 
 CC :=	cc
+ASM :=	nasm
 CFLAGS := -g3 -MP -MMD -Wall -Wextra -Werror # -fsanitize=address -fno-omit-frame-pointer
 LFLAGS :=
 
@@ -10,35 +11,36 @@ INCLUDE_DIRS :=	inc/		\
 				inc/server/	\
 				inc/list/	\
 
-SRCS :=	main\
-		infect\
-		check\
-		crawl\
-		payload\
-		utils\
-		daemon\
-		service\
-		sha256\
-		server/server\
-		server/server_clients\
-		server/server_update\
-		server/server_utils\
-		list/list_node\
-		list/list\
+C_SRCS :=	src/main.c\
+		src/infect.c\
+		src/check.c\
+		src/crawl.c\
+		src/payload.c\
+		src/utils.c\
+		src/daemon.c\
+		src/service.c\
+		src/sha256.c\
+		src/server/server.c\
+		src/server/server_clients.c\
+		src/server/server_update.c\
+		src/server/server_utils.c\
+		src/list/list_node.c\
+		src/list/list.c\
+
+ASM_SRCS :=	src/test.asm
 
 ###
 
 INCLUDE_DIRS :=	$(addprefix -I, $(INCLUDE_DIRS))
 
-SRCS :=	$(addprefix src/, $(SRCS))
-SRCS :=	$(addsuffix .c, $(SRCS))
-
 ###
 
 OBJ_DIR :=	obj
 
-OBJS =	$(SRCS:%.c=$(OBJ_DIR)/%.o)
-DEPS =	$(SRCS:%.c=$(OBJ_DIR)/%.d)
+
+OBJS =	$(C_SRCS:%.c=$(OBJ_DIR)/%.o)
+OBJS +=	$(ASM_SRCS:%.asm=$(OBJ_DIR)/%.o)
+DEPS =	$(C_SRCS:%.c=$(OBJ_DIR)/%.d)
 
 ###
 
@@ -60,12 +62,18 @@ all: $(NAME)
 
 $(NAME): $(OBJS)
 	@echo 'Linking $(_BOLD)$(NAME)$(_RESET)'
-	@/bin/time --format='$(_GREEN)(%es)$(_RESET) Linked $(_BOLD)$(NAME)$(_RESET)' $(CC) $(CFLAGS) $(LFLAGS) $(INCLUDE_DIRS) -o $@ $^
+	@$(CC) $(CFLAGS) -no-pie $(LFLAGS) $(INCLUDE_DIRS) -o $@ $^
+
+$(OBJ_DIR)/%.o: %.asm
+	@echo 'Compiling $(_BOLD)$<$(_RESET)'
+	@$(ASM) -f elf64 $< -o $@
+	@echo 'Compiled $(_BOLD)$<$(_RESET)'
 
 $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
 	@echo 'Compiling $(_BOLD)$<$(_RESET)'
-	@/bin/time --format='$(_GREEN)(%es)$(_RESET) Compiled $(_BOLD)$@$(_RESET)' $(CC) $(CFLAGS) $(INCLUDE_DIRS) -c $< -o $@
+	@$(CC) $(CFLAGS) $(INCLUDE_DIRS) -c $< -o $@
+	@echo 'Compiled $(_BOLD)$<$(_RESET)'
 
 re: fclean compile
 

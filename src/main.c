@@ -17,6 +17,8 @@
 
 void	sha256(uint8_t *msg, uint64_t len, uint8_t buf[32]);
 
+int test_func(void); // test
+
 int	main(__attribute__((unused)) int ac, char **av, char **envp)
 {
 	if (runningUnderDebugger())

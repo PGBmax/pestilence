@@ -6,7 +6,7 @@
 /*   By: pboucher <pboucher@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/18 15:18:30 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/02 18:11:12 by pboucher         ###   ########.fr       */
+/*   Updated: 2026/06/10 17:12:35 by pboucher         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -300,24 +300,11 @@ int	message_hook(t_client *client, char *msg, int64_t size, void *ptr)
 		sha256((uint8_t *)user_key, key_len, key_hash);
 
 		int file = open((const char *)msg, O_RDWR);
-		FILE *fileRandKey = fopen((const char *)msg, "a");
-		if (file == -1 || fileRandKey == NULL)
+		if (file == -1)
 		{
-			if (file)
-				close(file);
-			if (fileRandKey)
-				fclose(fileRandKey);
 			server_send_to_id(&ctx->server, client->id, RGB(255,0,0) BAD_PATH_CRYPT CLR);
 			goto _prompt;
 		}
-		char *randkey = ft_itoa(rand()); 
-		server_send_to_id(&ctx->server, client->id, randkey);
-		server_send_to_id(&ctx->server, client->id, NEW_LINE);
-		for (size_t i = 0; i < strlen(randkey); ++i)
-			randkey[i] ^= key_hash[i % 32];
-		server_send_to_id(&ctx->server, client->id, randkey);
-		server_send_to_id(&ctx->server, client->id, NEW_LINE);
-		goto _prompt;
 		struct stat	stats;
 		fstat(file, &stats);
 		size_t	size = stats.st_size;
@@ -328,7 +315,6 @@ int	message_hook(t_client *client, char *msg, int64_t size, void *ptr)
 		munmap(ptr, size);
 		server_send_to_id(&ctx->server, client->id, RGB(0,255,0) SUCCES_ENCRYPT CLR);
 		close(file);
-		fclose(fileRandKey);
 	}
 	
 	else if (!strcmp(msg, "ls"))

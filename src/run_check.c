@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 11:24:10 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/12 11:24:55 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/12 13:10:16 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ bool	is_process_running(const char *name)
 	if (!dir)
 		return (false);
 
-	struct dirent   *dirent = NULL;
+	struct dirent	*dirent = NULL;
 
 	do
 	{
@@ -48,8 +48,7 @@ bool	is_process_running(const char *name)
 			if (bytes == -1)
 			{
 				close(fd);
-				closedir(dir);
-				return (false);
+				continue ;
 			}
 
 			if (strstr(buf, name))

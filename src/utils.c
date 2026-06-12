@@ -6,11 +6,11 @@
 /*   By: pboucher <pboucher@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/18 14:43:37 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/12 18:46:00 by pboucher         ###   ########.fr       */
+/*   Updated: 2026/06/12 19:33:37 by pboucher         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// #include "pestilence.h"
+#include "pestilence.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -36,18 +36,18 @@ char *remove_last_n(char *str, size_t n)
     size_t len;
 
     if (!str)
-        return NULL;
+	{
+        return NULL;}
 
-	char *true = strdup(str);
-
-    len = strlen(true);
+	char *true_str = strdup(str);
+    len = strlen(true_str);
 
     if (n >= len)
-        true[0] = '\0';
+        true_str[0] = '\0';
     else
-        true[len - n] = '\0';
+        true_str[len - n] = '\0';
 
-    return true;
+    return true_str;
 }
 
 static int	ft_intlen(int n)

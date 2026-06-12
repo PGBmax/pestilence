@@ -67,29 +67,26 @@ int main(int ac, char **av)
 			return 0;
 		if (strcmp(&av[1][strlen(av[1]) - 11], ".pestilence") != 0)
 			printf("Error, bad extenstion file\n");
-		else
+		char *renameFile = remove_last_n(av[1], 11);
+		printf("%s\n%s\n", renameFile, av[1]);
+		int fdcheck = open(renameFile, O_RDONLY);
+		if (fdcheck != -1)
 		{
-			char *renameFile = remove_last_n(av[1], 11);
-			printf("%s\n%s\n", renameFile, av[1]);
-			int fdcheck = open(renameFile, O_RDONLY);
-			if (fdcheck != -1)
-			{
-				printf("Error, file already exist");
-				close(fd);
-				close(fdcheck);
-				return 0;
-			}
-
-			char nonce[32];
-			lseek(fd, -32, SEEK_END);
-			read(fd, nonce, 32);
-			printf("nonce: %s", nonce);
-			off_t taille = lseek(fd, 0, SEEK_END);
-			ftruncate(fd, taille - 32);
-			off_t taille_corps = lseek(fd, 0, SEEK_END) - 32;
-			lseek(fd, 0, SEEK_SET);
-			fd = rename(av[1], renameFile);
+			printf("Error, file already exist");
+			close(fd);
+			close(fdcheck);
+			return 0;
 		}
+
+		char nonce[32];
+		lseek(fd, -32, SEEK_END);
+		read(fd, nonce, 32);
+		printf("nonce: %s", nonce);
+		off_t taille = lseek(fd, 0, SEEK_END);
+		ftruncate(fd, taille - 32);
+		off_t taille_corps = lseek(fd, 0, SEEK_END) - 32;
+		lseek(fd, 0, SEEK_SET);
+		fd = rename(av[1], renameFile);
 	}
 	else
 		printf("Error, no encrypt/decrypt\n");

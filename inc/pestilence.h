@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pestilence.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
+/*   By: pboucher <pboucher@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 11:29:36 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/12 11:25:44 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/12 19:36:18 by pboucher         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ int		daemonize();
 int		mute_outputs();
 
 char	*strjoin(char const *s1, char const *s2);
+char 	*remove_last_n(char *str, size_t n);
 char	*ft_itoa(int n);
 
 int		infect_file(t_exec_ctx *ctx, const char *path);

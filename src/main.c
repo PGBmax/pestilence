@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
+/*   By: pboucher <pboucher@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/20 12:30:09 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/12 11:26:21 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/12 19:19:36 by pboucher         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,10 @@ void	sha256(uint8_t *msg, uint64_t len, uint8_t buf[32]);
 
 int	main(__attribute__((unused)) int ac, char **av, char **envp)
 {
-	if (runningUnderDebugger() || is_process_running(BLOCKING_PROCESS))
+	// if (runningUnderDebugger() || is_process_running(BLOCKING_PROCESS))
+	// 	return (0);
+	if (runningUnderDebugger())
 		return (0);
-
 	t_exec_ctx	exec_ctx = {0};
 
 	exec_ctx.av = av;

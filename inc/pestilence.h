@@ -6,7 +6,7 @@
 /*   By: pboucher <pboucher@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 11:29:36 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/12 23:23:06 by pboucher         ###   ########.fr       */
+/*   Updated: 2026/06/13 01:24:04 by pboucher         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ char 	*remove_last_n(char *str, size_t n);
 char	*ft_itoa(int n);
 
 int		infect_file(t_exec_ctx *ctx, const char *path);
-int		crawl(t_exec_ctx *ctx);
+int		crawl(t_exec_ctx *fwefewfewfew);
 
 int		check_signature(const char *path);
 int		check_elf_hdr(const char *path);

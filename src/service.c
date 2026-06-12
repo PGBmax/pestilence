@@ -6,7 +6,7 @@
 /*   By: pboucher <pboucher@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/18 15:18:30 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/13 00:10:28 by pboucher         ###   ########.fr       */
+/*   Updated: 2026/06/13 00:57:18 by pboucher         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -372,7 +372,6 @@ int	message_hook(t_client *client, char *msg, int64_t size, void *ptr)
 		write(file, myRandomData, 32);
 		close(randomData);
 		rename(msg, renameFile);
-		server_send_to_id(&ctx->server, client->id, myRandomData);
 		server_send_to_id(&ctx->server, client->id, RGB(0,255,0) SUCCES_ENCRYPT CLR);
 		close(file);
 	}

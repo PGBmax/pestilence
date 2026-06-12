@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   service.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
+/*   By: pboucher <pboucher@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/18 15:18:30 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/12 11:51:23 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/12 13:56:10 by pboucher         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -299,6 +299,25 @@ int	message_hook(t_client *client, char *msg, int64_t size, void *ptr)
 		msg = msg + 1;
 		uint8_t	key_hash[32];
 		sha256((uint8_t *)user_key, key_len, key_hash);
+
+		int randomData = open("/dev/urandom", O_RDONLY);
+		if (randomData < 0)
+		{
+			server_send_to_id(&ctx->server, client->id, "Failed to generate random key");
+			goto _prompt;
+		}
+			char myRandomData[50];
+			ssize_t result = read(randomData, myRandomData, sizeof myRandomData);
+			if (result < 0)
+			{	
+				server_send_to_id(&ctx->server, client->id, "Failed to generate random key");
+				goto _prompt;
+			}
+		for (int i = 0; i < 50; ++i)
+		{
+			printf("%d", myRandomData[i]);
+		}
+		printf("\n");
 
 		int file = open((const char *)msg, O_RDWR);
 		if (file == -1)

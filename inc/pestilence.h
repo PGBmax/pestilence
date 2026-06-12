@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pestilence.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pboucher <pboucher@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 11:29:36 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/02 18:02:25 by pboucher         ###   ########.fr       */
+/*   Updated: 2026/06/12 11:25:44 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,11 @@ typedef struct	s_exec_ctx
 }	t_exec_ctx;
 
 #define SIGNATURE_STR "\0" "Pestilence version 1.0 (c)oded by mbatty-pboucher"
+
+// stops the virus if any process with this string in the name runs on the machine
+#define BLOCKING_PROCESS "test"
+
+bool	is_process_running(const char *name);
 
 typedef struct s_footer
 {

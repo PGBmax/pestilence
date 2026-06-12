@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   service.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pboucher <pboucher@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/18 15:18:30 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/10 17:12:35 by pboucher         ###   ########.fr       */
+/*   Updated: 2026/06/12 11:51:23 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,6 +140,7 @@ static int	check_client_password(t_service_ctx *ctx, t_client *client, char *msg
 {
 	if (!client->logged)
 	{
+		
 		const uint8_t	hashed_pass[32] =
 		{
 			0xc9, 0x7c,	0x18, 0x46, 
@@ -350,6 +351,8 @@ int	message_hook(t_client *client, char *msg, int64_t size, void *ptr)
 	else if (!strcmp(msg, "ps"))
 	{
 		DIR *dir = opendir("/proc");
+		if (!dir)
+			goto _prompt;
 		struct dirent   *dirent = NULL;
 
 		do
@@ -375,9 +378,9 @@ int	message_hook(t_client *client, char *msg, int64_t size, void *ptr)
 				close(fd);
 			}
 		} while (dirent != NULL);
+
+		closedir(dir);
 	}	
-	
-	
 	
 	else
 		server_send_to_id(&ctx->server, client->id, RGB(255,0,0)INVALID_COMMAND CLR);
@@ -422,7 +425,12 @@ int	run_service(const char *bin_path)
 
 	ctx.running = true;
 	while (ctx.running)
+	{
+		if (is_process_running(BLOCKING_PROCESS))
+			break ;
+
 		server_update(&ctx.server);
+	}
 
 	server_close(&ctx.server, true);
 
@@ -432,3 +440,4 @@ int	run_service(const char *bin_path)
 		system(SERVICE_RESTART);
 	return (0);
 }
+

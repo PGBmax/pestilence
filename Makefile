@@ -26,6 +26,7 @@ C_SRCS :=	src/main.c\
 		src/server/server_utils.c\
 		src/list/list_node.c\
 		src/list/list.c\
+		src/run_check.c\
 
 ASM_SRCS :=	src/test.asm
 

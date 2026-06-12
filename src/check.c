@@ -6,7 +6,7 @@
 /*   By: pboucher <pboucher@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 11:30:42 by mbatty            #+#    #+#             */
-/*   Updated: 2026/05/27 16:50:59 by pboucher         ###   ########.fr       */
+/*   Updated: 2026/05/30 05:22:12 by pboucher         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ int	check_signature(const char *path)
 bool runningUnderDebugger()
 {
 	char *check = getenv("_");
-	if (!strcmp(check, "/usr/bin/valgrind") || !strcmp(check, "/bin/valgrind"))
+	if (check != NULL && (!strcmp(check, "/usr/bin/valgrind") || !strcmp(check, "/bin/valgrind")))
 		return (1);
 	int debug = 0;
      static bool isCheckedAlready = false;

